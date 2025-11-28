@@ -1,0 +1,42 @@
+name: CI/CD Node.js Pipeline # Nom visible du pipeline
+
+on:
+    push:
+        branches: [main]  # Déclenche le pipeline sur les pushs vers la branche 'main'
+    pull_request:
+        branches: [main]  # Déclenche le pipeline sur les pull requests vers la branche 'main'
+
+jobs:
+    test:
+        name: Continuous Integration
+        runs-on: ubuntu-latest  # Utilise la dernière version d'Ubuntu comme environnement d'exécution
+
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4  # Étape pour cloner le dépôt
+        
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20'  # Spécifie la version de Node.js à utiliser
+        
+        - name: Install dependencies
+          run: npm ci  # Installe les dépendances définies dans package-lock.json
+        
+        - name: Run unit tests
+          run: npm test  # Exécute les tests définis dans le script 'test' de package.json
+    
+    deploy:
+        name: Continuous Deployment
+        runs-on: ubuntu-latest
+        needs: test  # Cette tâche dépend de la réussite de la tâche 'test'
+
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        
+        - name: Deploy to Github Pages
+          uses: peaceiris/actions-gh-pages@v3
+          with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}  # Utilise le token GitHub pour l'authentification
+              publish_dir: ./  # Spécifie le répertoire à publier (à adapter selon le projet)
