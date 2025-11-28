@@ -35,6 +35,17 @@ jobs:
         - name: Checkout repository
           uses: actions/checkout@v4
         
+        - name: Generate dynamic index.html
+          run: |
+              echo "<!DOCTYPE html>" > index.html
+              echo "<html lang='fr'><head><meta charset='UTF-8'><title>Deployed Page</title></head>" >> index.html
+              echo "<body>" >> index.html
+              echo "<h1>Bienvenue sur le TP CI/CD</h1>" >> index.html
+              echo "<p>Deploiement automatique reussi !</p>" >> index.html
+              echo "<p><strong>Date et heure de deploiement : </strong> $(date +"%d/%m/%Y %H:%M:%S")</p>" >> index.html
+              echo "<p>Ce site a ete genere par GitHub Actions.</p>" >> index.html
+              echo "</body></html>" >> index.html
+
         - name: Deploy to Github Pages
           uses: peaceiris/actions-gh-pages@v3
           with:
